@@ -1,6 +1,6 @@
 /* eslint-disable import/extensions */
 /* eslint-disable no-undef */
-import foamTreeDataObj from '../data/foamTreeDataObj.js';
+import foamTreeDataObj from '../CodeMapper/Data/foamTreeDataObj.js';
 
 window.addEventListener('load', () => {
   // Perform FoamTree embedding here

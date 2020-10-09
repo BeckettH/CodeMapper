@@ -1,14 +1,14 @@
 const fs = require('fs');
 const path = require('path');
 const chalk = require('chalk');
+const open = require('open');
 const { filterAndParse } = require('./filterAndParse');
 const { writeFoamTreeData } = require('./build-results/generateFoamTreeData');
 const {
   generateDependencyData,
 } = require('./build-results/generateDependencyData');
 const { writeTreeMapData } = require('./build-results/generateTreeMapData');
-const generateHTMLfiles = require('./build-results/generateHTMLfiles.js');
-const open = require('open');
+const generateHTMLfiles = require('./build-results/generateHtmlFiles');
 
 async function flow(fileTree, pathToDir) {
   // call generateTree with the root path passed in
@@ -24,10 +24,9 @@ async function flow(fileTree, pathToDir) {
     fs.mkdirSync(`${pathToDir}/CodeMapper/Visualization`);
   }
 
-  //generates html files for the visualization in the project directory
-  // console.log(path.resolve(process.cwd(), `visualization`));
+  // generates html files for the visualization in the project directory
   await generateHTMLfiles(
-    path.resolve(process.cwd(), `visualization`),
+    path.resolve(process.cwd(), 'visualization'),
     `${pathToDir}/CodeMapper/Visualization`
   );
 
@@ -47,14 +46,14 @@ async function flow(fileTree, pathToDir) {
     // we're going to pass that into generateDependencyData so that we can convert it into the correct type
     // for treeMap chart
     await Promise.all([
+      // create treemap data for highcharts version of the treemap
       writeTreeMapData(fileTree, pathToDir),
+      // create data for the dependency wheel
       generateDependencyData(fileTree, [], pathToDir),
+      // create treemap data for foamtree version of the treemap
+      writeFoamTreeData(fileTree, pathToDir),
     ]);
-    // writeTreeMapData(fileTree, pathToDir);
-    // // for the dependency wheel
-    // generateDependencyData(fileTree, [], pathToDir);
-    // create treemap data for foamtree version of the treemap
-    // writeFoamTreeData(fileTree);
+
   } catch (err) {
     console.error(
       `\n\x1b[31mError in flow.js with creating visualisation data fileTree): ${err.message}\x1b[37m`
